@@ -2,7 +2,7 @@ import socket
 import sys
 
 ip = "31.131.73.30"
-port = 22
+port = 8200
 
 # создаём сокет для подключения
 sock = socket.socket()

@@ -5,7 +5,7 @@ import sys
 
 sock = socket.socket()
 ip = "31.131.73.30"
-port = 22
+port = 8200
 sock.bind((ip, port))
 
 # сервер ожидает передачи информации
