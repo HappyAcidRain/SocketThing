@@ -4,7 +4,7 @@ import sys
 # создаём сокет и связываем его с IP-адресом и портом
 
 sock = socket.socket()
-ip = 31.131.73.30
+ip = "31.131.73.30"
 port = 22
 sock.bind((ip, port))
 
