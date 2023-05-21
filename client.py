@@ -7,7 +7,6 @@ port = 8200
 # создаём сокет для подключения
 sock = socket.socket()
 sock.connect((ip,port))
-conn = sock.accept()
 
 print("Connected!")
 
@@ -18,7 +17,7 @@ sock.send((bytes(f_name, encoding = 'UTF-8')))
 while True:
 
 		# получаем байтовые строки
-		l = conn.recv(1024)
+		l = sock.recv(1024)
 
 		# пишем байтовые строки в файл
 		f.write(l)
