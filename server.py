@@ -8,7 +8,7 @@ port = 8200
 sock.bind(('', port))
 
 # сервер ожидает передачи информации
-sock.listen(1000)
+sock.listen(10)
 
 while True:
     # начинаем принимать соединения
@@ -18,7 +18,7 @@ while True:
     print('connected:', addr)
 
     # получаем название файла
-    name_f = (conn.recv(1024)).decode ('UTF-8')
+    name_f = (conn.recv(1024)).decode('UTF-8')
 
     # открываем файл в режиме байтовой записи в отдельной папке 'sent'
     f = open('sent/' + name_f,'wb')
