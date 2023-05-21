@@ -20,7 +20,7 @@ while True:
 	print('connected:', addr)
 
 	# получаем название файла
-	name_f = (conn.recv(1024)).decode('UTF-8')
+	f_name = (conn.recv(1024)).decode('UTF-8')
 
 	# открываем файл в режиме байтового чтения
 	f = open(f"files/{f_name}", "rb")
