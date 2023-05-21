@@ -13,29 +13,29 @@ print("server has been started!")
 sock.listen(10)
 
 while True:
-    # начинаем принимать соединения
-    conn, addr = sock.accept()
+	# начинаем принимать соединения
+	conn, addr = sock.accept()
 
-    # выводим информацию о подключении
-    print('connected:', addr)
+	# выводим информацию о подключении
+	print('connected:', addr)
 
-    # получаем название файла
-    name_f = (conn.recv(1024)).decode('UTF-8')
+	# получаем название файла
+	name_f = (conn.recv(1024)).decode('UTF-8')
 
-    # открываем файл в режиме байтового чтения
-        f = open (f"files/{f_name}", "rb")
+	# открываем файл в режиме байтового чтения
+		f = open(f"files/{f_name}", "rb")
 
-    # читаем строку
-        l = f.read(1024)
+	# читаем строку
+		l = f.read(1024)
 
-    while l:
-        # отправляем строку клиенту
-        sock.send(l)
-        l=f.read(1024)
+	while l:
+		# отправляем строку клиенту
+		sock.send(l)
+		l=f.read(1024)
 
-    f.close()
-    conn.close()
+	f.close()
+	conn.close()
 
-    print('File received')
+	print('File received')
 
 sock.close()

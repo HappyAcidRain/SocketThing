@@ -16,14 +16,14 @@ sock.send((bytes(f_name, encoding = 'UTF-8')))
 
 while True:
 
-        # получаем байтовые строки
-        l = conn.recv(1024)
+		# получаем байтовые строки
+		l = conn.recv(1024)
 
-        # пишем байтовые строки в файл
-        f.write(l)
+		# пишем байтовые строки в файл
+		f.write(l)
 
-        if not l:
-            break
+		if not l:
+			break
 
 f.close()
 sock.close()
