@@ -4,9 +4,8 @@ import sys
 # создаём сокет и связываем его с IP-адресом и портом
 
 sock = socket.socket()
-ip = "31.131.73.30"
 port = 8200
-sock.bind((ip, port))
+sock.bind(('', port))
 
 # сервер ожидает передачи информации
 sock.listen(1000)
