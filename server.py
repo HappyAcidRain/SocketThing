@@ -18,6 +18,7 @@ while True:
 
 	# выводим информацию о подключении
 	print('connected:', addr)
+	print('conn data:', conn)
 
 	# получаем название файла
 	f_name = (conn.recv(1024)).decode('UTF-8')

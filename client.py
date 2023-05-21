@@ -7,6 +7,7 @@ port = 8200
 # создаём сокет для подключения
 sock = socket.socket()
 sock.connect((ip,port))
+conn = sock.accept()
 
 print("Connected!")
 
