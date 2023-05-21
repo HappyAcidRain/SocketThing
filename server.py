@@ -31,7 +31,7 @@ while True:
 
 	while l:
 		# отправляем строку клиенту
-		sock.send(l)
+		conn.send(l)
 		l=f.read(1024)
 
 	f.close()

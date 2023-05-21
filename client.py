@@ -14,6 +14,8 @@ print("Connected!")
 f_name = input ('File to recive: ')
 sock.send((bytes(f_name, encoding = 'UTF-8')))
 
+f = open(f_name, "wb")
+
 while True:
 
 		# получаем байтовые строки
