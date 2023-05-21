@@ -23,7 +23,7 @@ while True:
     name_f = (conn.recv(1024)).decode('UTF-8')
 
     # открываем файл в режиме байтового чтения
-        f = open ("files/" + f_name, "rb")
+        f = open (f"files/{f_name}", "rb")
 
     # читаем строку
         l = f.read(1024)
