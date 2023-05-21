@@ -7,6 +7,8 @@ sock = socket.socket()
 port = 8200
 sock.bind(('', port))
 
+print("server has been started!")
+
 # сервер ожидает передачи информации
 sock.listen(10)
 
@@ -20,19 +22,16 @@ while True:
     # получаем название файла
     name_f = (conn.recv(1024)).decode('UTF-8')
 
-    # открываем файл в режиме байтовой записи в отдельной папке 'sent'
-    f = open('sent/' + name_f,'wb')
+    # открываем файл в режиме байтового чтения
+        f = open ("files/" + f_name, "rb")
 
-    while True:
+    # читаем строку
+        l = f.read(1024)
 
-        # получаем байтовые строки
-        l = conn.recv(1024)
-
-        # пишем байтовые строки в файл на сервере
-        f.write(l)
-
-        if not l:
-            break
+    while l:
+        # отправляем строку клиенту
+        sock.send(l)
+        l=f.read(1024)
 
     f.close()
     conn.close()

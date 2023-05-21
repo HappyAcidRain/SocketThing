@@ -8,20 +8,22 @@ port = 8200
 sock = socket.socket()
 sock.connect((ip,port))
 
+print("Connected!")
+
 # запрашиваем имя файла и отправляем серверу
-f_name = input ('File to send: ')
+f_name = input ('File to recive: ')
 sock.send((bytes(f_name, encoding = 'UTF-8')))
 
-# открываем файл в режиме байтового чтения
-f = open (f_name, "rb")
+while True:
 
-# читаем строку
-l = f.read(1024)
+        # получаем байтовые строки
+        l = conn.recv(1024)
 
-while l:
-    # отправляем строку на сервер
-    sock.send(l)
-    l=f.read(1024)
+        # пишем байтовые строки в файл
+        f.write(l)
+
+        if not l:
+            break
 
 f.close()
 sock.close()
