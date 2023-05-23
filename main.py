@@ -10,6 +10,8 @@ import MainUI
 # подключение
 import socket
 
+# прочее
+import pathlib
 
 # основное окно
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
@@ -58,9 +60,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_label.setDuration(400)
 		self.an_label.start()
 
-	def savingUrl(self):
-		pass
-
 	def sendingFiles(self):
 
 		items = []
@@ -68,15 +67,14 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		for x in range(self.lw_files_to.count()-1):
 			items.append(str(self.lw_files_to.item(x)))
 
+		ip = "31.131.73.30"
+		port = 8200
+		sock = socket.socket()
+		sock.connect((ip,port))
 
 		for item in items:
 
-			ip = "31.131.73.30"
-			port = 8200
-			sock = socket.socket()
-			sock.connect((ip,port))
-
-			# получить имя файла 
+			f_name = pathlib.PurePath(items(item)).name  
 			sock.send((bytes(f_name, encoding = 'UTF-8')))
 
 			# открываем файл в режиме байтового чтения
@@ -90,8 +88,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 				sock.send(l)
 				l = f.read(1024)
 
-			f.close()
-			sock.close()
+		k = "alDone"
+		sock.send(k)
+
+		f.close()
+		sock.close()
 	
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
