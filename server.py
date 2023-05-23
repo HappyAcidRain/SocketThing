@@ -3,7 +3,7 @@ import sys
 
 sock = socket.socket()
 port = 8200
-sock.bind((' ', port))
+sock.bind(('', port))
 
 # сервер ожидает передачи информации
 sock.listen(10)
