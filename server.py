@@ -21,7 +21,7 @@ while True:
 		name_f = (conn.recv(1024)).decode('UTF-8')
 
 		# открываем файл в режиме байтовой записи в отдельной папке 'sent'
-		f = open('sent/' + name_f,'wb')
+		f = open(f"sent/{f_name}", "wb")
 
 		while True:
 

@@ -68,19 +68,21 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		for x in range(self.lw_files_to.count()-1):
 			items.append(str(self.lw_files_to.item(x)))
+			print(items)
 
 		ip = "31.131.73.30"
 		port = 8200
 		sock = socket.socket()
 		sock.connect((ip,port))
 
-		for item in items:
+		for x in items:
 
-			f_name = pathlib.PurePath(items(item)).name  
+			url = items(x)
+			f_name = pathlib.PurePath(url).name  
 			sock.send((bytes(f_name, encoding = 'UTF-8')))
 
 			# открываем файл в режиме байтового чтения
-			f = open (items(item), "rb")
+			f = open (items(x), "rb")
 
 			# читаем строку
 			l = f.read(1024)
