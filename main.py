@@ -65,19 +65,24 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 	def sendFiles(self):
 
 		items = []
+		times_1 = 0
+		times_2 = 0
 
-		for x in range(self.lw_files_to.count()-1):
-			items.append(str(self.lw_files_to.item(x)))
+		print(self.lw_files_to.count())
+
+		for x in range(int(self.lw_files_to.count())-1):
+			items.append(str(self.lw_files_to.item(times_1)))
+			times_1 += 1
 			print(items)
 
-		ip = "31.131.73.30"
+		ip = "127.0.0.1"
 		port = 8200
 		sock = socket.socket()
 		sock.connect((ip,port))
 
 		for x in items:
 
-			url = items(x)
+			url = items(times)
 			f_name = pathlib.PurePath(url).name  
 			sock.send((bytes(f_name, encoding = 'UTF-8')))
 
