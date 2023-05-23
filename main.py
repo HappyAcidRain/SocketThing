@@ -28,6 +28,8 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_list = QPropertyAnimation(self.lw_files_to, b"pos")
 		self.an_label = QPropertyAnimation(self.lbl_pic, b"pos")
 
+		self.btn_send.clicked.connect(self.sendFiles)
+
 	def dragEnterEvent(self, event):
 		# Тут выполняются проверки и дается (или нет) разрешение на Drop
 
@@ -60,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_label.setDuration(400)
 		self.an_label.start()
 
-	def sendingFiles(self):
+	def sendFiles(self):
 
 		items = []
 
@@ -89,7 +91,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 				l = f.read(1024)
 
 		k = "alDone"
-		sock.send(k)
+		sock.send(k).encode()
 
 		f.close()
 		sock.close()
