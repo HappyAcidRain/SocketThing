@@ -14,7 +14,7 @@ while True:
 
 	# выводим информацию о подключении
 	print('connected:', addr)
-	k = conn.recv(1024).decode()
+	k = conn.recv(1024)
 
 	if k != "alDone":
 

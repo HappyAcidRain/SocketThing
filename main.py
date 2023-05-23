@@ -91,7 +91,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 				l = f.read(1024)
 
 		k = "alDone"
-		sock.send(k).encode()
+		sock.send(bytes(k))
 
 		f.close()
 		sock.close()
