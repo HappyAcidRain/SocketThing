@@ -58,6 +58,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_label.setDuration(400)
 		self.an_label.start()
 
+	def savingUrl(self):
+		pass
+
+	def sendingFiles(self):
+		pass
 	
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
