@@ -62,7 +62,36 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		pass
 
 	def sendingFiles(self):
-		pass
+
+		items = []
+
+		for x in range(self.lw_files_to.count()-1):
+			items.append(str(self.lw_files_to.item(x)))
+
+
+		for item in items:
+
+			ip = "31.131.73.30"
+			port = 8200
+			sock = socket.socket()
+			sock.connect((ip,port))
+
+			# получить имя файла 
+			sock.send((bytes(f_name, encoding = 'UTF-8')))
+
+			# открываем файл в режиме байтового чтения
+			f = open (items(item), "rb")
+
+			# читаем строку
+			l = f.read(1024)
+
+			while (l):
+				# отправляем строку на сервер
+				sock.send(l)
+				l = f.read(1024)
+
+			f.close()
+			sock.close()
 	
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
