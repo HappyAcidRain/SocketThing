@@ -90,10 +90,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 				sock.send(l)
 				l = f.read(1024)
 
+			f.close()
+
 		k = "alDone"
 		sock.send(bytes(k, encoding = 'UTF-8'))
 
-		f.close()
 		sock.close()
 	
 if __name__ == '__main__':

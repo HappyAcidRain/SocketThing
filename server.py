@@ -34,9 +34,9 @@ while True:
 			if not l:
 				break
 
-	else:
-
 		f.close()
+
+	else:
 		conn.close()
 sock.close()
 
