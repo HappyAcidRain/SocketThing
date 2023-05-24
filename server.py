@@ -3,7 +3,7 @@ import sys
 
 sock = socket.socket()
 port = 8200
-sock.bind(('127.0.0.1', port))
+sock.bind(('localhost', port))
 
 # сервер ожидает передачи информации
 sock.listen(10)
@@ -15,13 +15,12 @@ while True:
 	# выводим информацию о подключении
 	print('connected:', addr)
 	k = (conn.recv(1024)).decode('UTF-8')
+	print(k)
 
-	if k is not "alDone":
-
-		name_f = (conn.recv(1024)).decode('UTF-8')
+	if k != "alDone":
 
 		# открываем файл в режиме байтовой записи в отдельной папке 'sent'
-		f = open(f"sent/{name_f}", "wb")
+		f = open(k, "wb")
 
 		while True:
 
@@ -31,12 +30,10 @@ while True:
 			# пишем байтовые строки в файл на сервере
 			f.write(l)
 
-			if not l:
-				break
-
 		f.close()
 
 	else:
 		conn.close()
+
 sock.close()
 

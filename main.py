@@ -30,23 +30,21 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		self.btn_send.clicked.connect(self.sendFiles)
 
-	def dragEnterEvent(self, event):
-		# Тут выполняются проверки и дается (или нет) разрешение на Drop
+		self.filePlaylist = []
 
+	def dragEnterEvent(self, event):
 		mime = event.mimeData()
 
-		# Если перемещаются ссылки
 		if mime.hasUrls():
-			# Разрешаем
 			event.acceptProposedAction()
 
 	def dropEvent(self, event):
-		# Обработка события Drop
 
 		for url in event.mimeData().urls():
 			file_name = url.toLocalFile()
 			self.lw_files_to.addItem(file_name)
 			self.animation()
+			self.updList()
 
 		return super().dropEvent(event)
 
@@ -62,32 +60,29 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_label.setDuration(400)
 		self.an_label.start()
 
+	def updList(self):
+
+		for x in range(self.lw_files_to.count()):
+			item = self.lw_files_to.item(x)
+			self.filePlaylist.append(str(item.text()))
+			print(f"appended: {self.filePlaylist}")
+
 	def sendFiles(self):
 
-		items = []
-		times_1 = 0
-		times_2 = 0
-
-		print(self.lw_files_to.count())
-
-		for x in range(int(self.lw_files_to.count())-1):
-			items.append(str(self.lw_files_to.item(times_1)))
-			times_1 += 1
-			print(items)
-
-		ip = "127.0.0.1"
+		ip = "localhost"
 		port = 8200
 		sock = socket.socket()
 		sock.connect((ip,port))
 
-		for x in items:
+		filesNum = 0
 
-			url = items(times)
-			f_name = pathlib.PurePath(url).name  
+		while filesNum < len(self.filePlaylist):
+			
+			f_name = pathlib.PurePath(self.filePlaylist[filesNum]).name  
 			sock.send((bytes(f_name, encoding = 'UTF-8')))
 
 			# открываем файл в режиме байтового чтения
-			f = open (items(x), "rb")
+			f = open (self.filePlaylist[filesNum], "rb")
 
 			# читаем строку
 			l = f.read(1024)
@@ -99,11 +94,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 			f.close()
 
-		k = "alDone"
-		sock.send(bytes(k, encoding = 'UTF-8'))
+			filesNum += 1
 
 		sock.close()
-	
+
+
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	m = MainWindow()

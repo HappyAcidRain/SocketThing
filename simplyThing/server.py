@@ -5,7 +5,7 @@ import sys
 
 sock = socket.socket()
 port = 8200
-sock.bind(('', port))
+sock.bind(('localhost', port))
 
 print("server has been started!")
 

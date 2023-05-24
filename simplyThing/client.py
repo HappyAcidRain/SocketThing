@@ -1,7 +1,7 @@
 import socket
 import sys
 
-ip = "31.131.73.30"
+ip = "localhost"
 port = 8200
 
 # создаём сокет для подключения
