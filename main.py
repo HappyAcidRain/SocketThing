@@ -64,7 +64,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		for x in range(self.lw_files_to.count()):
 			item = self.lw_files_to.item(x)
-			self.filePlaylist.append(str(item.text()))
+			self.filePlaylist.append(item.text())
 			print(f"appended: {self.filePlaylist}")
 
 	def sendFiles(self):
@@ -76,25 +76,31 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		filesNum = 0
 
-		while filesNum < len(self.filePlaylist):
+		while filesNum <= len(self.filePlaylist)-1 :
 			
 			f_name = pathlib.PurePath(self.filePlaylist[filesNum]).name  
-			sock.send((bytes(f_name, encoding = 'UTF-8')))
+			sock.send((bytes(f_name, encoding = 'UTF-16')))
 
 			# открываем файл в режиме байтового чтения
 			f = open (self.filePlaylist[filesNum], "rb")
 
 			# читаем строку
-			l = f.read(1024)
+			l = f.read() 
+
+			end = False
 
 			while (l):
 				# отправляем строку на сервер
 				sock.send(l)
 				l = f.read(1024)
 
-			f.close()
+				if not l:
+					end = True
+					break
 
-			filesNum += 1
+			if end == True:
+				f.close()
+				filesNum += 1
 
 		sock.close()
 

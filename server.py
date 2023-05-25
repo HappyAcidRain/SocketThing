@@ -14,13 +14,13 @@ while True:
 
 	# выводим информацию о подключении
 	print('connected:', addr)
-	k = (conn.recv(1024)).decode('UTF-8')
+	k = (conn.recv(1024)).decode('UTF-16')
 	print(k)
 
 	if k != "alDone":
 
 		# открываем файл в режиме байтовой записи в отдельной папке 'sent'
-		f = open(k, "wb")
+		f = open("recived/" + k, "wb")
 
 		while True:
 
@@ -29,6 +29,9 @@ while True:
 
 			# пишем байтовые строки в файл на сервере
 			f.write(l)
+
+			if not l:
+				break
 
 		f.close()
 
