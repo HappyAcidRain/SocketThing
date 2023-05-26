@@ -8,7 +8,9 @@ from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QPoint, QTimer, QThre
 import MainUI
 
 # подключение
+import os
 import socket
+import struct
 
 # прочее
 import pathlib
@@ -28,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_list = QPropertyAnimation(self.lw_files_to, b"pos")
 		self.an_label = QPropertyAnimation(self.lbl_pic, b"pos")
 
-		self.btn_send.clicked.connect(self.sendFiles)
+		self.btn_send.clicked.connect(self.sendMultipleFiles)
 
 		self.filePlaylist = []
 
@@ -65,44 +67,46 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		for x in range(self.lw_files_to.count()):
 			item = self.lw_files_to.item(x)
 			self.filePlaylist.append(item.text())
-			print(f"appended: {self.filePlaylist}")
+		print(f"appended: {self.filePlaylist}")
 
-	def sendFiles(self):
+	def sendFiles(self, file):
 
-		ip = "localhost"
-		port = 8200
-		sock = socket.socket()
-		sock.connect((ip,port))
+		@staticmethod
+		def send_file(sck: socket.socket, filename):
+
+			# Получение размера файла.
+			filesize = os.path.getsize(filename)
+
+			# В первую очередь сообщим серверу, 
+			# сколько байт будет отправлено.
+
+			sck.sendall(struct.pack("<Q", filesize))
+
+			# Отправка файла блоками по 1024 байта.
+			with open(filename, "rb") as f:
+				while read_bytes := f.read(1024):
+					sck.sendall(read_bytes)
+
+		with socket.create_connection(("localhost", 6190)) as conn:
+
+			# отправим имя файла
+			f_name = pathlib.PurePath(file).name  
+			conn.send((bytes(f_name, encoding = 'UTF-16')))
+
+			print("Подключение к серверу.")
+			print("Передача файла...")
+			send_file(conn, file)
+			print("Отправлено.")
+
+		print("Соединение закрыто.")
+
+	def sendMultipleFiles(self):
 
 		filesNum = 0
 
 		while filesNum <= len(self.filePlaylist)-1 :
-			
-			f_name = pathlib.PurePath(self.filePlaylist[filesNum]).name  
-			sock.send((bytes(f_name, encoding = 'UTF-16')))
-
-			# открываем файл в режиме байтового чтения
-			f = open (self.filePlaylist[filesNum], "rb")
-
-			# читаем строку
-			l = f.read() 
-
-			end = False
-
-			while (l):
-				# отправляем строку на сервер
-				sock.send(l)
-				l = f.read(1024)
-
-				if not l:
-					end = True
-					break
-
-			if end == True:
-				f.close()
-				filesNum += 1
-
-		sock.close()
+			self.sendFiles(self.filePlaylist[filesNum])
+			filesNum += 1
 
 
 if __name__ == '__main__':

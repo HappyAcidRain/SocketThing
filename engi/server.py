@@ -1,8 +1,6 @@
 import socket
 import struct
 
-
-
 def receive_file_size(sck: socket.socket):
 
     # Эта функция обеспечивает получение байтов, 
@@ -54,9 +52,7 @@ with socket.create_server(("localhost", 6190)) as server:
     print(f"{address[0]}:{address[1]} подключен.")
 
     print("Получаем файл...")
-    filename = (conn.recv(1024)).decode('UTF-16')
-    receive_file(conn, filename)
+    receive_file(conn, "image-received.png")
 
     print("Файл получен.")
-    
-print("Соединение закрыто.") 
+print("Соединение закрыто.")
