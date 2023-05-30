@@ -1,62 +1,55 @@
 import socket
-import struct
+ 
+IP = "localhost"
+PORT = 4455
+ADDR = (IP, PORT)
+FORMAT = "utf-32-le"
+ 
+def main():
+    print("[STARTING] Server is starting.")
+    """ Staring a TCP socket. """
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ 
+    """ Bind the IP and PORT to the server. """
+    server.bind(ADDR)
+ 
+    """ Server is listening, i.e., server is now waiting for the client to connected. """
+    server.listen()
+    print("[LISTENING] Server is listening.")
+ 
+    while True:
+        """ Server has accepted the connection from the client. """
+        conn, addr = server.accept()
+        print(f"[NEW CONNECTION] {addr} connected.")
+ 
+        """ Receiving the filename from the client. """
+        filename = conn.recv(1024).decode(FORMAT)
+        print(f"[RECV] Receiving the filename.")
+        file = open(filename, "wb")
+        conn.send("Filename received.".encode(FORMAT))
+ 
+        """ Receiving the file data from the client. """
+        print(f"[RECV] Receiving the file data.")
 
+        while True:
 
+            # получаем байтовые строки
+            data = conn.recv(1024)
 
-def receive_file_size(sck: socket.socket):
+            # пишем байтовые строки в файл на сервере
+            file.write(data)
 
-    # Эта функция обеспечивает получение байтов, 
-    # указывающих на размер отправляемого файла, 
-    # который кодируется клиентом с помощью 
-    # struct.pack(), функции, которая генерирует 
-    # последовательность байтов, представляющих размер файла.
+            if not data:
+                break
 
-    fmt = "<Q"
-    expected_bytes = struct.calcsize(fmt)
-    received_bytes = 0
-    stream = bytes()
-
-    while received_bytes < expected_bytes:
-
-        chunk = sck.recv(expected_bytes - received_bytes)
-        stream += chunk
-        received_bytes += len(chunk)
-    filesize = struct.unpack(fmt, stream)[0]
-
-    return filesize
-
-def receive_file(sck: socket.socket, filename):
-
-    # Сначала считываем из сокета количество 
-    # байтов, которые будут получены из файла.
-
-    filesize = receive_file_size(sck)
-
-    # Открываем новый файл для сохранения
-    # полученных данных.
-
-    with open(filename, "wb") as f:
-        received_bytes = 0
-        # Получаем данные из файла блоками по
-        # 1024 байта до объема
-        # общего количество байт, сообщенных клиентом.
-
-        while received_bytes < filesize:
-            chunk = sck.recv(1024)
-            if chunk:
-                f.write(chunk)
-                received_bytes += len(chunk)
-
-with socket.create_server(("localhost", 6190)) as server:
-    print("Ожидание клиента...")
-
-    conn, address = server.accept()
-    print(f"{address[0]}:{address[1]} подключен.")
-
-    print("Получаем файл...")
-    filename = (conn.recv(1024)).decode('UTF-16')
-    receive_file(conn, filename)
-
-    print("Файл получен.")
-    
-print("Соединение закрыто.") 
+        conn.send("File data received".encode(FORMAT))
+ 
+        """ Closing the file. """
+        file.close()
+ 
+        """ Closing the connection from the client. """
+        conn.close()
+        print(f"[DISCONNECTED] {addr} disconnected.")
+ 
+if __name__ == "__main__":
+    main()

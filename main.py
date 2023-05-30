@@ -30,9 +30,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_list = QPropertyAnimation(self.lw_files_to, b"pos")
 		self.an_label = QPropertyAnimation(self.lbl_pic, b"pos")
 
-		self.btn_send.clicked.connect(self.sendMultipleFiles)
+		self.btn_send.clicked.connect(self.sendFiles)
 
 		self.filePlaylist = []
+		self.ip = 0
+		self.port = 0
 
 	def dragEnterEvent(self, event):
 		mime = event.mimeData()
@@ -67,45 +69,46 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		for x in range(self.lw_files_to.count()):
 			item = self.lw_files_to.item(x)
 			self.filePlaylist.append(item.text())
+
 		print(f"appended: {self.filePlaylist}")
 
-	def sendFiles(self, file):
+	def sendMagic(self, file):
 
-		@staticmethod
-		def send_file(sck: socket.socket, filename):
+		ip = "localhost"
+		port = 4455
+		addr = (ip, port)
+		FORMAT = "utf-32-le"
 
-			# Получение размера файла.
-			filesize = os.path.getsize(filename)
+		client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		client.connect(addr)
 
-			# В первую очередь сообщим серверу, 
-			# сколько байт будет отправлено.
+		""" Opening and reading the file data. """
+		f_name = pathlib.PurePath(file).name
+		openedFile = open(file, "rb")
+		data = openedFile.read(1024)
 
-			sck.sendall(struct.pack("<Q", filesize))
+		""" Sending the filename to the server. """
+		client.send(f_name.encode(FORMAT))
+		msg = client.recv(1024).decode(FORMAT)
+		print(f"[SERVER]: {msg}")
 
-			# Отправка файла блоками по 1024 байта.
-			with open(filename, "rb") as f:
-				while read_bytes := f.read(1024):
-					sck.sendall(read_bytes)
+		""" Sending the file data to the server. """
+		while (data):
+			client.send(data)
+			data = openedFile.read(1024)
 
-		with socket.create_connection(("localhost", 6190)) as conn:
+		""" Closing the file. """
+		openedFile.close()
 
-			# отправим имя файла
-			f_name = pathlib.PurePath(file).name  
-			conn.send((bytes(f_name, encoding = 'UTF-16')))
+		""" Closing the connection from the server. """
+		client.close()
 
-			print("Подключение к серверу.")
-			print("Передача файла...")
-			send_file(conn, file)
-			print("Отправлено.")
-
-		print("Соединение закрыто.")
-
-	def sendMultipleFiles(self):
+	def sendFiles(self):
 
 		filesNum = 0
 
 		while filesNum <= len(self.filePlaylist)-1 :
-			self.sendFiles(self.filePlaylist[filesNum])
+			self.sendMagic(self.filePlaylist[filesNum])
 			filesNum += 1
 
 
