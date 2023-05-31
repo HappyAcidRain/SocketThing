@@ -180,7 +180,7 @@ QPushButton:pressed {
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="le_port">
     <property name="geometry">
      <rect>
       <x>110</x>

@@ -74,9 +74,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 	def sendMagic(self, file):
 
-		ip = "localhost"
-		port = 4455
-		addr = (ip, port)
+		addr = (self.ip, self.port)
 		FORMAT = "utf-32-le"
 
 		client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -104,6 +102,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		client.close()
 
 	def sendFiles(self):
+
+		self.ip = self.le_ip.text()
+		self.port = int(self.le_port.text())
 
 		filesNum = 0
 
