@@ -75,30 +75,26 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 	def sendMagic(self, file):
 
 		addr = (self.ip, self.port)
-		FORMAT = "utf-32-le"
-
 		client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		client.connect(addr)
 
-		""" Opening and reading the file data. """
+		# открываем файл
 		f_name = pathlib.PurePath(file).name
 		openedFile = open(file, "rb")
 		data = openedFile.read(1024)
 
-		""" Sending the filename to the server. """
-		client.send(f_name.encode(FORMAT))
-		msg = client.recv(1024).decode(FORMAT)
+		# отправляем имя файла и расширение 
+		client.send(f_name.encode("utf-8"))
+		msg = client.recv(1024).decode("utf-8")
 		print(f"[SERVER]: {msg}")
 
-		""" Sending the file data to the server. """
+		# отправляем файл
 		while (data):
 			client.send(data)
 			data = openedFile.read(1024)
 
-		""" Closing the file. """
+		# завершаем 
 		openedFile.close()
-
-		""" Closing the connection from the server. """
 		client.close()
 
 	def sendFiles(self):

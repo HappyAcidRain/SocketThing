@@ -3,51 +3,39 @@ import socket
 IP = "localhost"
 PORT = 4455
 ADDR = (IP, PORT)
-FORMAT = "utf-32-le"
  
 def main():
-    print("[STARTING] Server is starting.")
-    """ Staring a TCP socket. """
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
- 
-    """ Bind the IP and PORT to the server. """
     server.bind(ADDR)
- 
-    """ Server is listening, i.e., server is now waiting for the client to connected. """
     server.listen()
-    print("[LISTENING] Server is listening.")
+
+    print("[STARTING] Server has been started and now listening.")
  
     while True:
-        """ Server has accepted the connection from the client. """
+        # разрешаем подключение 
         conn, addr = server.accept()
         print(f"[NEW CONNECTION] {addr} connected.")
- 
-        """ Receiving the filename from the client. """
-        filename = conn.recv(1024).decode(FORMAT)
+        
+        # получаем имя файла и расширение 
+        filename = conn.recv(1024).decode("utf-8")
         print(f"[RECV] Receiving the filename.")
         file = open(filename, "wb")
-        conn.send("Filename received.".encode(FORMAT))
+        conn.send("Filename received.".encode("utf-8"))
  
-        """ Receiving the file data from the client. """
+        # получаем файл
         print(f"[RECV] Receiving the file data.")
 
         while True:
-
-            # получаем байтовые строки
             data = conn.recv(1024)
-
-            # пишем байтовые строки в файл на сервере
             file.write(data)
 
             if not data:
                 break
 
-        conn.send("File data received".encode(FORMAT))
+        conn.send("File data received".encode("utf-8"))
  
-        """ Closing the file. """
+        # завершаем
         file.close()
- 
-        """ Closing the connection from the client. """
         conn.close()
         print(f"[DISCONNECTED] {addr} disconnected.")
  
