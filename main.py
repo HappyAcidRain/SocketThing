@@ -31,8 +31,10 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_label = QPropertyAnimation(self.lbl_pic, b"pos")
 
 		self.btn_send.clicked.connect(self.sendFiles)
+		self.lw_files_to.itemClicked.connect(self.cleaning)
 
 		self.filePlaylist = []
+		self.tempPlaylist = []
 		self.ip = 0
 		self.port = 0
 
@@ -46,9 +48,13 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		for url in event.mimeData().urls():
 			file_name = url.toLocalFile()
-			self.lw_files_to.addItem(file_name)
-			self.animation()
-			self.updList()
+			if file_name not in self.filePlaylist:
+				self.lw_files_to.addItem(file_name)
+			else:
+				self.lbl_status.setText("Status: Error: that/these file already in!")
+
+		self.animation()
+		self.updList()
 
 		return super().dropEvent(event)
 
@@ -68,9 +74,10 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		for x in range(self.lw_files_to.count()):
 			item = self.lw_files_to.item(x)
-			self.filePlaylist.append(item.text())
+			self.tempPlaylist.append(item.text())
 
-		print(f"appended: {self.filePlaylist}")
+		# удаляем повторяющиеся пути 
+		self.filePlaylist = list(set(self.tempPlaylist))
 
 	def sendMagic(self, file):
 
@@ -107,6 +114,19 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		while filesNum <= len(self.filePlaylist)-1 :
 			self.sendMagic(self.filePlaylist[filesNum])
 			filesNum += 1
+
+	def cleaning(self):
+		try:
+			item = self.lw_files_to.currentItem()
+			self.lw_files_to.takeItem(self.lw_files_to.row(item))
+			self.filePlaylist.remove(str(item.text()))
+			self.lbl_status.setText("Status: file unselected")
+
+			# TODO: сделай 1 сек показ сатуса и возврат к проценту (%p%)
+			self.pb_progress.setFormat("Status: file unselected")
+			
+		except ValueError:
+			self.filePlaylist.clear()
 
 
 if __name__ == '__main__':
