@@ -124,6 +124,8 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 	def sendFiles(self):
 
+		self.pb_progress.setRange(0, self.lw_files_to.count())
+
 		self.ip = self.le_ip.text()
 		self.port = int(self.le_port.text())
 
@@ -132,6 +134,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		while filesNum <= len(self.filePlaylist)-1 :
 			self.sendMagic(self.filePlaylist[filesNum])
 			filesNum += 1
+			self.pb_progress.setValue(filesNum)
+
+			if self.pb_progress.value() == self.lw_files_to.count():
+				self.status("Status: all files has been sent!")
+				self.pb_progress.setValue(0)
 
 	def cleaning(self):
 		try:
