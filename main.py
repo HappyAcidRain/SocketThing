@@ -15,6 +15,20 @@ import struct
 # прочее
 import pathlib
 
+# таймер
+class TimerThread(QtCore.QThread):
+	s_timer = QtCore.pyqtSignal(int)
+
+	def  __init__(self):
+		QtCore.QThread.__init__(self)
+
+		self.state = 1
+
+	def run(self):
+		self.sleep(1)
+		self.s_timer.emit(self.state)
+		
+
 # основное окно
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 	def __init__(self):
@@ -33,6 +47,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.btn_send.clicked.connect(self.sendFiles)
 		self.lw_files_to.itemClicked.connect(self.cleaning)
 
+		self.thread = TimerThread()
+		self.thread.s_timer.connect(self.changeFormat)
+
 		self.filePlaylist = []
 		self.tempPlaylist = []
 		self.ip = 0
@@ -50,8 +67,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 			file_name = url.toLocalFile()
 			if file_name not in self.filePlaylist:
 				self.lw_files_to.addItem(file_name)
+				self.status("Status: file added")
 			else:
-				self.lbl_status.setText("Status: Error: that/these file already in!")
+				self.status("Status: Error: that/these file already in!")
 
 		self.animation()
 		self.updList()
@@ -120,13 +138,18 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 			item = self.lw_files_to.currentItem()
 			self.lw_files_to.takeItem(self.lw_files_to.row(item))
 			self.filePlaylist.remove(str(item.text()))
-			self.lbl_status.setText("Status: file unselected")
-
-			# TODO: сделай 1 сек показ сатуса и возврат к проценту (%p%)
-			self.pb_progress.setFormat("Status: file unselected")
+			self.status("Status: file unselected")
 			
 		except ValueError:
 			self.filePlaylist.clear()
+
+	def changeFormat(self, state):
+		if state == 1:
+			self.pb_progress.setFormat('%p%')
+
+	def status(self, text):
+		self.pb_progress.setFormat(text)
+		self.thread.start()
 
 
 if __name__ == '__main__':
