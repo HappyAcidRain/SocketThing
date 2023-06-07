@@ -178,17 +178,23 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 
 		self.btn_save.clicked.connect(self.save)
 
-		# отображаем настройки из БД
 		connect = sqlite3.connect("settings.db")
 		cursor = connect.cursor()
 
 		cursor.execute("SELECT ip FROM savedData WHERE rowid = 1")
-		ip_raw = str(cursor.fetchone())
+		ip = str(cursor.fetchone())
 
 		cursor.execute("SELECT port FROM savedData WHERE rowid = 1")
-		port_raw = str(cursor.fetchone())
+		port = str(cursor.fetchone())
 
-		# убери из raw скобки и запятую через replace
+		ip = ip.replace("(","")
+		ip = ip.replace(")","")
+		ip = ip.replace(",","")
+		ip = ip.replace("'","")
+
+		port = port.replace("(","")
+		port = port.replace(")","")
+		port = port.replace(",","")
 
 		connect.close()
 
