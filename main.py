@@ -4,8 +4,9 @@ from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QDialog, QApplication
 from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QPoint, QTimer, QThread
 
-# окно 
+# окна
 import MainUI
+import settingsUI
 
 # подключение
 import os
@@ -14,6 +15,7 @@ import struct
 
 # прочее
 import pathlib
+import sqlite3
 
 # таймер
 class TimerThread(QtCore.QThread):
@@ -45,6 +47,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_label = QPropertyAnimation(self.lbl_pic, b"pos")
 
 		self.btn_send.clicked.connect(self.sendFiles)
+		self.btn_settings.clicked.connect(self.settingsWin)
 		self.lw_files_to.itemClicked.connect(self.cleaning)
 
 		self.thread = TimerThread()
@@ -157,6 +160,56 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 	def status(self, text):
 		self.pb_progress.setFormat(text)
 		self.thread.start()
+
+	def settingsWin(self):
+		self.settings = SettingWindow()
+		self.settings.show()
+
+
+class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
+	def __init__(self):
+		super(SettingWindow, self).__init__()
+		self.setupUi(self)
+
+		self.setWindowTitle("SendThing settings")
+
+		self.setFixedWidth(280)
+		self.setFixedHeight(250)
+
+		self.btn_save.clicked.connect(self.save)
+
+		# отображаем настройки из БД
+		connect = sqlite3.connect("settings.db")
+		cursor = connect.cursor()
+
+		cursor.execute("SELECT ip FROM savedData WHERE rowid = 1")
+		ip_raw = str(cursor.fetchone())
+
+		cursor.execute("SELECT port FROM savedData WHERE rowid = 1")
+		port_raw = str(cursor.fetchone())
+
+		# убери из raw скобки и запятую через replace
+
+		connect.close()
+
+		self.le_ip.setPlaceholderText(ip)
+		self.le_port.setPlaceholderText(port)
+
+	def save(self):
+
+		connect = sqlite3.connect("settings.db")
+		cursor = connect.cursor()
+
+		ip = self.le_ip.text()
+		port = self.le_port.text()
+
+		cursor.execute(f"UPDATE savedData SET ip = '{ip}' WHERE rowid = 1 ")
+		cursor.execute(f"UPDATE savedData SET port = '{port}' WHERE rowid = 1 ")
+		connect.commit()
+		connect.close()
+
+		self.le_ip.setPlaceholderText(ip)
+		self.le_port.setPlaceholderText(port)
 
 
 if __name__ == '__main__':
