@@ -166,6 +166,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.settings.show()
 
 
+# окно настроек
 class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 	def __init__(self):
 		super(SettingWindow, self).__init__()
