@@ -102,7 +102,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 	def sendMagic(self, file):
 
-		addr = (self.ip, self.port)
+		addr = (self.ip, int(self.port))
 		client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		client.connect(addr)
 
@@ -127,10 +127,29 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 	def sendFiles(self):
 
-		self.pb_progress.setRange(0, self.lw_files_to.count())
+		connect = sqlite3.connect("settings.db")
+		cursor = connect.cursor()
 
-		self.ip = self.le_ip.text()
-		self.port = int(self.le_port.text())
+		cursor.execute("SELECT ip FROM savedData WHERE rowid = 1")
+		ip = str(cursor.fetchone())
+
+		cursor.execute("SELECT port FROM savedData WHERE rowid = 1")
+		port = str(cursor.fetchone())
+
+		ip = ip.replace("(","")
+		ip = ip.replace(")","")
+		ip = ip.replace("'", "")
+		self.ip = ip.replace(",","")
+
+		port = port.replace("(","")
+		port = port.replace(")","")
+		self.port = port.replace(",","")
+
+		print(self.ip + ":" + self.port)
+
+		connect.close()
+
+		self.pb_progress.setRange(0, self.lw_files_to.count())
 
 		filesNum = 0
 
