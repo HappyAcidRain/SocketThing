@@ -1,6 +1,6 @@
 # база
 import sys
-from PyQt6 import QtWidgets, QtCore 
+from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtWidgets import QDialog, QApplication
 from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QPoint, QTimer, QThread
 
@@ -42,6 +42,10 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.setFixedWidth(450)
 		self.setFixedHeight(310)
 		self.setAcceptDrops(True)
+
+		app_icon = QtGui.QIcon()
+		app_icon.addFile('assets/icon90.png', QtCore.QSize(90,90))
+		self.setWindowIcon(app_icon)
 
 		self.an_list = QPropertyAnimation(self.lw_files_to, b"pos")
 		self.an_label = QPropertyAnimation(self.lbl_pic, b"pos")
@@ -192,9 +196,12 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 		self.setupUi(self)
 
 		self.setWindowTitle("SendThing settings")
-
 		self.setFixedWidth(280)
 		self.setFixedHeight(250)
+
+		app_icon = QtGui.QIcon()
+		app_icon.addFile('assets/icon90.png', QtCore.QSize(90,90))
+		self.setWindowIcon(app_icon)
 
 		self.btn_save.clicked.connect(self.save)
 
