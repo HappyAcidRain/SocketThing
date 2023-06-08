@@ -10,6 +10,8 @@ def main():
     server.listen()
 
     print("[STARTING] Server has been started and now listening.")
+    print("[INFO] Server's addr is: " + str(IP) + ":"+ str(PORT))
+    print("[INFO] You can change ip and port by editing server.py file")
  
     while True:
         # разрешаем подключение 
