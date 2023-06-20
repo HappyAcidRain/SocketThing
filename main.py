@@ -30,7 +30,6 @@ class TimerThread(QtCore.QThread):
 		self.sleep(1)
 		self.s_timer.emit(self.state)
 		
-
 # основное окно
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 	def __init__(self):
@@ -106,9 +105,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 	def sendMagic(self, file):
 
-		addr = (self.ip, int(self.port))
+		ADDR = (self.ip, int(self.port))
 		client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		client.connect(addr)
+		client.connect(ADDR)
 
 		# открываем файл
 		f_name = pathlib.PurePath(file).name
@@ -196,8 +195,8 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 		self.setupUi(self)
 
 		self.setWindowTitle("SendThing settings")
-		self.setFixedWidth(280)
-		self.setFixedHeight(250)
+		self.setFixedWidth(340)
+		self.setFixedHeight(350)
 
 		app_icon = QtGui.QIcon()
 		app_icon.addFile('assets/icon90.png', QtCore.QSize(90,90))
@@ -225,24 +224,24 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 
 		connect.close()
 
-		self.le_ip.setPlaceholderText(ip)
-		self.le_port.setPlaceholderText(port)
+		self.le_clientIp.setPlaceholderText(ip)
+		self.le_clientPort.setPlaceholderText(port)
 
 	def save(self):
 
 		connect = sqlite3.connect("settings.db")
 		cursor = connect.cursor()
 
-		ip = self.le_ip.text()
-		port = self.le_port.text()
+		ip = self.le_clientIp.text()
+		port = self.le_clientPort.text()
 
 		cursor.execute(f"UPDATE savedData SET ip = '{ip}' WHERE rowid = 1 ")
 		cursor.execute(f"UPDATE savedData SET port = '{port}' WHERE rowid = 1 ")
 		connect.commit()
 		connect.close()
 
-		self.le_ip.setPlaceholderText(ip)
-		self.le_port.setPlaceholderText(port)
+		self.le_clientIp.setPlaceholderText(ip)
+		self.le_clientPort.setPlaceholderText(port)
 
 
 if __name__ == '__main__':

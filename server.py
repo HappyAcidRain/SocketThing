@@ -1,6 +1,6 @@
 import socket
  
-IP = "localhost"
+IP = '192.168.1.117'
 PORT = 4455
 ADDR = (IP, PORT)
  

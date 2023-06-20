@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>562</width>
+    <height>350</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+	background-color: rgb(25, 25, 25);
+	color: rgb(130, 130, 130);
+
+	border-radius: 5px;
+}
+
+QLabel{
+	color: rgb(130, 130, 130);
+}
+
+QFrame{
+	background-color: rgb(30, 30, 30);
+
+	border-radius: 5px;
+}
+
+QLineEdit{
+	background-color: rgb(40, 40, 40);
+	color: rgb(130, 130, 130);
+
+	border-radius: 5px;
+}
+
+QTextBrowser{
+	background-color: rgb(40, 40, 40);
+	color: rgb(130, 130, 130);
+
+	border-radius: 5px;
+}
+
+QListView{
+	background-color: rgb(40, 40, 40);
+	color: rgb(130, 130, 130);
+
+	border-radius: 5px;
+}
+
+QProgressBar{
+	background-color: rgb(40, 40, 40);
+	color: rgb(130, 130, 130);
+
+	border-radius: 5px;
+}
+
+QPushButton{
+	background-color: rgb(40, 40, 40);
+	color: rgb(130, 130, 130);
+
+	border-radius: 5px;
+}
+
+QPushButton:pressed {
+	background-color: rgb(130, 130, 130);
+	color: rgb(130, 130, 130);
+
+	border-radius: 5px;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTextBrowser" name="textBrowser">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>541</width>
+      <height>291</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>309</y>
+      <width>431</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Files will be saved here:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>454</x>
+      <y>310</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>close</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

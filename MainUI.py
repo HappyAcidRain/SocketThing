@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(982, 310)
+        MainWindow.resize(913, 310)
         font = QtGui.QFont()
         font.setFamily("Mona-Sans Regular")
         font.setPointSize(22)
@@ -66,7 +66,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.btn_send = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.btn_send.setGeometry(QtCore.QRect(330, 260, 111, 21))
+        self.btn_send.setGeometry(QtCore.QRect(310, 260, 131, 21))
         font = QtGui.QFont()
         font.setFamily("Bahnschrift SemiBold")
         font.setPointSize(9)
@@ -108,7 +108,7 @@ class Ui_MainWindow(object):
         self.lw_files_to.setGeometry(QtCore.QRect(470, 10, 431, 241))
         self.lw_files_to.setObjectName("lw_files_to")
         self.btn_settings = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.btn_settings.setGeometry(QtCore.QRect(10, 260, 111, 21))
+        self.btn_settings.setGeometry(QtCore.QRect(10, 260, 131, 21))
         font = QtGui.QFont()
         font.setFamily("Bahnschrift SemiBold")
         font.setPointSize(9)
@@ -117,6 +117,16 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.btn_settings.setFont(font)
         self.btn_settings.setObjectName("btn_settings")
+        self.btn_receive = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.btn_receive.setGeometry(QtCore.QRect(150, 260, 151, 21))
+        font = QtGui.QFont()
+        font.setFamily("Bahnschrift SemiBold")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.btn_receive.setFont(font)
+        self.btn_receive.setObjectName("btn_receive")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -125,5 +135,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.btn_send.setText(_translate("MainWindow", "send!"))
+        self.btn_send.setText(_translate("MainWindow", "send"))
         self.btn_settings.setText(_translate("MainWindow", "settings"))
+        self.btn_receive.setText(_translate("MainWindow", "receive"))

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>982</width>
+    <width>913</width>
     <height>310</height>
    </rect>
   </property>
@@ -71,9 +71,9 @@ QPushButton:pressed {
    <widget class="QPushButton" name="btn_send">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>310</x>
       <y>260</y>
-      <width>111</width>
+      <width>131</width>
       <height>21</height>
      </rect>
     </property>
@@ -87,7 +87,7 @@ QPushButton:pressed {
      </font>
     </property>
     <property name="text">
-     <string>send!</string>
+     <string>send</string>
     </property>
    </widget>
    <widget class="QProgressBar" name="pb_progress">
@@ -173,7 +173,7 @@ QPushButton:pressed {
      <rect>
       <x>10</x>
       <y>260</y>
-      <width>111</width>
+      <width>131</width>
       <height>21</height>
      </rect>
     </property>
@@ -188,6 +188,28 @@ QPushButton:pressed {
     </property>
     <property name="text">
      <string>settings</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_receive">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>260</y>
+      <width>151</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiBold</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>receive</string>
     </property>
    </widget>
   </widget>
