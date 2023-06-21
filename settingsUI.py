@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(341, 350)
+        MainWindow.resize(340, 350)
         MainWindow.setStyleSheet("QMainWindow {\n"
 "    background-color: rgb(25, 25, 25);\n"
 "    color: rgb(130, 130, 130);\n"
@@ -97,6 +97,9 @@ class Ui_MainWindow(object):
         self.lbl_path = QtWidgets.QLabel(parent=self.centralwidget)
         self.lbl_path.setGeometry(QtCore.QRect(180, 220, 151, 16))
         self.lbl_path.setObjectName("lbl_path")
+        self.btn_close = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.btn_close.setGeometry(QtCore.QRect(100, 310, 113, 32))
+        self.btn_close.setObjectName("btn_close")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -114,3 +117,4 @@ class Ui_MainWindow(object):
         self.lbl_client.setText(_translate("MainWindow", "client"))
         self.lbl_server.setText(_translate("MainWindow", "server"))
         self.lbl_path.setText(_translate("MainWindow", "path to save files"))
+        self.btn_close.setText(_translate("MainWindow", "close"))
