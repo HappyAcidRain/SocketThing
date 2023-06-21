@@ -7,6 +7,7 @@ from PyQt6.QtCore import QPropertyAnimation, QEasingCurve, QPoint, QTimer, QThre
 # окна
 import MainUI
 import settingsUI
+import serverUI
 
 # подключение
 import os
@@ -29,7 +30,91 @@ class TimerThread(QtCore.QThread):
 	def run(self):
 		self.sleep(1)
 		self.s_timer.emit(self.state)
-		
+
+# сервер 
+class ServerThread(QtCore.QThread):
+	message = QtCore.pyqtSignal(str)
+
+	def  __init__(self):
+		QtCore.QThread.__init__(self)
+
+		self.IP = None
+		self.PORT = None
+		self.PATH = None
+
+		self.readSettings()
+		self.ADDR = (self.IP, int(self.PORT))
+
+		self.server()
+
+	def readSettings(self):
+
+		connect = sqlite3.connect("settings.db")
+		cursor = connect.cursor()
+
+		cursor.execute("SELECT serverIp FROM savedData WHERE rowid = 1")
+		ip = str(cursor.fetchone())
+
+		cursor.execute("SELECT serverPort FROM savedData WHERE rowid = 1")
+		port = str(cursor.fetchone())
+
+		cursor.execute("SELECT serverPath FROM savedData WHERE rowid = 1")
+		path = str(cursor.fetchone())
+
+		ip = ip.replace("(","")
+		ip = ip.replace(")","")
+		ip = ip.replace(",","")
+		self.IP = ip.replace("'","")
+
+		port = port.replace("(","")
+		port = port.replace(")","")
+		self.PORT = port.replace(",","")
+
+		path = path.replace("(","")
+		path = path.replace(")","")
+		path = path.replace(",","")
+		self.PATH = path.replace("'","")
+
+		connect.close()
+
+	def server(self):
+
+		server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		server.bind(self.ADDR)
+		server.listen()
+
+		self.message.emit("[STARTING] Server has been started and now listening.")
+		self.message.emit("[INFO] Server's addr is: " + str(self.IP) + ":"+ str(self.PORT))
+		self.message.emit("[INFO] You can change ip and port by editing server.py file")
+ 
+		while True:
+			# разрешаем подключение 
+			conn, addr = server.accept()
+			self.message.emit(f"[NEW CONNECTION] {addr} connected.")
+        
+			# получаем имя файла и расширение 
+			filename = conn.recv(1024).decode("utf-8")
+			self.message.emit(f"[RECV] Receiving the filename.")
+			file = open(f"{self.PATH}/{filename}", "wb")
+			conn.send("Filename received.".encode("utf-8"))
+ 
+			# получаем файл
+			self.message.emit(f"[RECV] Receiving the file data.")
+
+			while True:
+				data = conn.recv(1024)
+				file.write(data)
+
+				if not data:
+					break
+
+			conn.send("File data received".encode("utf-8"))
+ 
+			# завершаем
+			file.close()
+			conn.close()
+			self.message.emit(f"[DISCONNECTED] {addr} disconnected.")
+
 # основное окно
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 	def __init__(self):
@@ -50,6 +135,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.an_label = QPropertyAnimation(self.lbl_pic, b"pos")
 
 		self.btn_send.clicked.connect(self.sendFiles)
+		self.btn_receive.clicked.connect(self.serverWin)
 		self.btn_settings.clicked.connect(self.settingsWin)
 		self.lw_files_to.itemClicked.connect(self.cleaning)
 
@@ -187,6 +273,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 		self.settings = SettingWindow()
 		self.settings.show()
 
+	def serverWin(self):
+		self.server = ServerWindow()
+		self.server.show()
 
 # окно настроек
 class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
@@ -207,10 +296,10 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 		connect = sqlite3.connect("settings.db")
 		cursor = connect.cursor()
 
-		cursor.execute("SELECT ip FROM savedData WHERE rowid = 1")
+		cursor.execute("SELECT clientIp FROM savedData WHERE rowid = 1")
 		ip = str(cursor.fetchone())
 
-		cursor.execute("SELECT port FROM savedData WHERE rowid = 1")
+		cursor.execute("SELECT clientPort FROM savedData WHERE rowid = 1")
 		port = str(cursor.fetchone())
 
 		ip = ip.replace("(","")
@@ -235,13 +324,29 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 		ip = self.le_clientIp.text()
 		port = self.le_clientPort.text()
 
-		cursor.execute(f"UPDATE savedData SET ip = '{ip}' WHERE rowid = 1 ")
-		cursor.execute(f"UPDATE savedData SET port = '{port}' WHERE rowid = 1 ")
+		cursor.execute(f"UPDATE savedData SET clientIp = '{ip}' WHERE rowid = 1 ")
+		cursor.execute(f"UPDATE savedData SET clientPort = '{port}' WHERE rowid = 1 ")
 		connect.commit()
 		connect.close()
 
 		self.le_clientIp.setPlaceholderText(ip)
 		self.le_clientPort.setPlaceholderText(port)
+
+# окно сервера 
+class ServerWindow(QtWidgets.QMainWindow, serverUI.Ui_MainWindow, QDialog):
+	def __init__(self):
+		super(ServerWindow, self).__init__()
+		self.setupUi(self)
+
+		self.setWindowTitle("SendThing server")
+		self.btn_close.clicked.connect(lambda: self.close())
+
+		self.serverThread = ServerThread()
+		self.serverThread.message.connect(self.console)
+		self.thread.start()
+
+		def console(self, message):
+			self.te_console.append(message)
 
 
 if __name__ == '__main__':

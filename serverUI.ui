@@ -74,17 +74,7 @@ QPushButton:pressed {
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTextBrowser" name="textBrowser">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>541</width>
-      <height>291</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="lbl_savePath">
     <property name="geometry">
      <rect>
       <x>16</x>
@@ -97,17 +87,27 @@ QPushButton:pressed {
      <string>Files will be saved here:</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="btn_close">
     <property name="geometry">
      <rect>
       <x>454</x>
       <y>310</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>close</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="te_console">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>541</width>
+      <height>291</height>
+     </rect>
     </property>
    </widget>
   </widget>
