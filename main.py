@@ -77,51 +77,33 @@ class ServerThread(QtCore.QThread):
 		cursor.execute("SELECT serverPath FROM savedData WHERE rowid = 1")
 		path = str(cursor.fetchone())
 
-		ip = ip.replace("(","")
-		ip = ip.replace(")","")
-		ip = ip.replace(",","")
-		self.IP = ip.replace("'","")
-
-		port = port.replace("(","")
-		port = port.replace(")","")
-		self.PORT = port.replace(",","")
-
-		path = path.replace("(","")
-		path = path.replace(")","")
-		path = path.replace(",","")
-		self.PATH = path.replace("'","")
+		self.IP = textTrans(ip, True)
+		self.PORT = textTrans(port, False)
+		self.PATH = textTrans(path, True)
 
 		connect.close()
 
-	def server(self):
+	def run(self):
 
 		server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		server.bind(self.ADDR)
 		server.listen()
 
-		print("1")
-
-		self.send("[STARTING] Server has been started and now listening.")
-		self.send("[INFO] Server's addr is: " + str(self.IP) + ":"+ str(self.PORT))
-		self.send("[INFO] You can change ip and port by editing server.py file")
-
-		print("23")
+		self.message.emit("[STARTING] Server has been started and now listening.")
+		self.message.emit("[INFO] Server's addr is: " + str(self.IP) + ":"+ str(self.PORT))
  
 		while self.state:
 			# разрешаем подключение 
 			conn, addr = server.accept()
-			self.send(f"[NEW CONNECTION] {addr} connected.")
-
-			print("2")
+			self.message.emit(f"[CONNECTION] {addr} connected.")
         
 			# получаем имя файла и расширение 
 			filename = conn.recv(1024).decode("utf-8")
-			self.send(f"[RECV] Receiving the filename.")
+			self.message.emit(f"[RECV] Receiving the filename.")
 			file = open(f"{self.PATH}/{filename}", "wb")
-			conn.send("Filename received.".encode("utf-8"))
  
 			# получаем файл
-			self.send(f"[RECV] Receiving the file data.")
+			self.message.emit(f"[RECV] Receiving the file data.")
 
 			while self.state:
 				data = conn.recv(1024)
@@ -130,12 +112,12 @@ class ServerThread(QtCore.QThread):
 				if not data:
 					break
 
-			conn.send("File data received".encode("utf-8"))
+			self.message.emit(f"[DONE] The file is received successfuly.")
  
 			# завершаем
 			file.close()
 			conn.close()
-			self.send(f"[DISCONNECTED] {addr} disconnected.")
+			self.message.emit(f"[CONNECTION] {addr} disconnected.")
 
 			if self.state == False:
 				break
@@ -145,9 +127,6 @@ class ServerThread(QtCore.QThread):
 			self.state = False
 		else:
 			self.state = True
-
-	def send(self, message):
-		self.message.emit(message)
 
 # основное окно
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
@@ -236,8 +215,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		# отправляем имя файла и расширение 
 		client.send(f_name.encode("utf-8"))
-		msg = client.recv(1024).decode("utf-8")
-		print(f"[SERVER]: {msg}")
 
 		# отправляем файл
 		while (data):
@@ -250,34 +227,37 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 	def sendFiles(self):
 
-		connect = sqlite3.connect("settings.db")
-		cursor = connect.cursor()
+		if len(self.filePlaylist) != 0:
 
-		cursor.execute("SELECT clientIp FROM savedData WHERE rowid = 1")
-		ip = str(cursor.fetchone())
+			connect = sqlite3.connect("settings.db")
+			cursor = connect.cursor()
 
-		cursor.execute("SELECT clientPort FROM savedData WHERE rowid = 1")
-		port = str(cursor.fetchone())
+			cursor.execute("SELECT clientIp FROM savedData WHERE rowid = 1")
+			ip = str(cursor.fetchone())
+
+			cursor.execute("SELECT clientPort FROM savedData WHERE rowid = 1")
+			port = str(cursor.fetchone())
  
-		self.ip = textTrans(ip, True)
-		self.port = textTrans(port, True)
+			self.ip = textTrans(ip, True)
+			self.port = textTrans(port, True)
 
-		print(self.ip + ":" + self.port)
+			connect.close()
 
-		connect.close()
+			self.pb_progress.setRange(0, self.lw_files_to.count())
 
-		self.pb_progress.setRange(0, self.lw_files_to.count())
+			filesNum = 0
 
-		filesNum = 0
+			while filesNum <= len(self.filePlaylist)-1 :
+				self.sendMagic(self.filePlaylist[filesNum])
+				filesNum += 1
+				self.pb_progress.setValue(filesNum)
 
-		while filesNum <= len(self.filePlaylist)-1 :
-			self.sendMagic(self.filePlaylist[filesNum])
-			filesNum += 1
-			self.pb_progress.setValue(filesNum)
+				if self.pb_progress.value() == self.lw_files_to.count():
+					self.status("Status: all files has been sent!")
+					self.pb_progress.setValue(0)
 
-			if self.pb_progress.value() == self.lw_files_to.count():
-				self.status("Status: all files has been sent!")
-				self.pb_progress.setValue(0)
+		else:
+			self.status("No files has been added!")
 
 	def cleaning(self):
 		try:
@@ -320,48 +300,30 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 		self.setWindowIcon(app_icon)
 
 		self.btn_save.clicked.connect(self.save)
-		self.btn_close.clicked.connect(lambda: self.close())
+		self.btn_close.clicked.connect(self.close)
 
 		connect = sqlite3.connect("settings.db")
 		cursor = connect.cursor()
 
 		cursor.execute("SELECT clientIp FROM savedData WHERE rowid = 1")
 		clientIp = str(cursor.fetchone())
-
-		clientIp = clientIp.replace("(","")
-		clientIp = clientIp.replace(")","")
-		clientIp = clientIp.replace(",","")
-		clientIp = clientIp.replace("'","")
+		clientIp = textTrans(clientIp, True)
 
 		cursor.execute("SELECT clientPort FROM savedData WHERE rowid = 1")
 		clientPort = str(cursor.fetchone())
-
-		clientPort = clientPort.replace("(","")
-		clientPort = clientPort.replace(")","")
-		clientPort = clientPort.replace(",","")
+		clientPort = textTrans(clientPort, False)
 
 		cursor.execute("SELECT serverIp FROM savedData WHERE rowid = 1")
 		serverIp = str(cursor.fetchone())
-
-		serverIp = serverIp.replace("(","")
-		serverIp = serverIp.replace(")","")
-		serverIp = serverIp.replace(",","")
-		serverIp = serverIp.replace("'","")
+		serverIp = textTrans(serverIp, True)
 
 		cursor.execute("SELECT serverPort FROM savedData WHERE rowid = 1")
 		serverPort = str(cursor.fetchone())
-
-		serverPort = serverPort.replace("(","")
-		serverPort = serverPort.replace(")","")
-		serverPort = serverPort.replace(",","")
+		serverPort = textTrans(serverPort, False)
 
 		cursor.execute("SELECT serverPath FROM savedData WHERE rowid = 1")
 		serverPath = str(cursor.fetchone())
-
-		serverPath = serverPath.replace("(","")
-		serverPath = serverPath.replace(")","")
-		serverPath = serverPath.replace(",","")
-		serverPath = serverPath.replace("'","")
+		serverPath = textTrans(serverPath, True)
 
 		connect.close()
 
@@ -371,21 +333,39 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 		self.le_serverPort.setPlaceholderText(serverPort)
 		self.le_path.setPlaceholderText(serverPath)
 
+	# TODO: make this with loops
 	def save(self):
 
-		connect = sqlite3.connect("settings.db")
-		cursor = connect.cursor()
+		clientIp = self.le_clientIp.text()
+		clientPort = self.le_clientPort.text()
+		serverIp = self.le_serverIp.text()
+		serverPort = self.le_serverPort.text()
+		serverPath = self.le_path.text()
 
-		ip = self.le_clientIp.text()
-		port = self.le_clientPort.text()
+		self.write('clientIp', clientIp)
+		self.write('clientPort', clientPort)
+		self.write('serverIp', serverIp)
+		self.write('serverPort', serverPort)
+		self.write('serverPath', serverPath)
 
-		cursor.execute(f"UPDATE savedData SET clientIp = '{ip}' WHERE rowid = 1 ")
-		cursor.execute(f"UPDATE savedData SET clientPort = '{port}' WHERE rowid = 1 ")
-		connect.commit()
-		connect.close()
+		self.placeholderChange(self.le_clientIp, clientIp)
+		self.placeholderChange(self.le_clientPort, clientPort)
+		self.placeholderChange(self.le_serverIp, serverIp)
+		self.placeholderChange(self.le_serverPort, serverPort)
+		self.placeholderChange(self.le_path, serverPath)
 
-		self.le_clientIp.setPlaceholderText(ip)
-		self.le_clientPort.setPlaceholderText(port)
+	def write(self, place, text):
+		if text != '':
+			connect = sqlite3.connect("settings.db")
+			cursor = connect.cursor()
+			cursor.execute(f"UPDATE savedData SET {place} = '{text}' WHERE rowid = 1 ")
+			connect.commit()
+			connect.close()
+
+	def placeholderChange(self, place, text):
+		if text != '':
+			place.setPlaceholderText(text)
+
 
 # окно сервера 
 class ServerWindow(QtWidgets.QMainWindow, serverUI.Ui_MainWindow, QDialog):
@@ -393,24 +373,38 @@ class ServerWindow(QtWidgets.QMainWindow, serverUI.Ui_MainWindow, QDialog):
 		super(ServerWindow, self).__init__()
 		self.setupUi(self)
 
+		self.signal = False
+
 		self.setWindowTitle("SendThing server")
-		self.btn_close.clicked.connect(self.stopAndClose)
-		self.btn_start.clicked.connect(self.start)
+		self.lbl_savePath.setStyleSheet("color: rgb(130, 130, 130); font: 10px ComicSans MS")
+		self.btn_close.clicked.connect(self.close)
+		self.viewPath()
 
 		self.serverThread = ServerThread()
 		self.serverThread.message.connect(self.console)
 
+		self.serverThread.changeState()
+		self.serverThread.start()
+
+	def viewPath(self):
+		connect = sqlite3.connect("settings.db")
+		cursor = connect.cursor()
+
+		cursor.execute("SELECT serverPath FROM savedData WHERE rowid = 1")
+		serverPath = str(cursor.fetchone())
+		serverPath = textTrans(serverPath, True)
+
+		self.lbl_savePath.setText(" Files will be saved here: " + serverPath)
+
+		connect.close()
+
 	def console(self, message):
 		self.te_console.append(message)
 
-	def stopAndClose(self):
-		self.serverThread.changeState()
-		self.close()
+	def closeEvent(self, event):
 
-	def start(self):
 		self.serverThread.changeState()
-		self.serverThread.server()
-
+			
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)

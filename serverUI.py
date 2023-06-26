@@ -74,7 +74,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.lbl_savePath = QtWidgets.QLabel(parent=self.centralwidget)
-        self.lbl_savePath.setGeometry(QtCore.QRect(16, 309, 331, 31))
+        self.lbl_savePath.setGeometry(QtCore.QRect(16, 309, 431, 31))
         self.lbl_savePath.setObjectName("lbl_savePath")
         self.btn_close = QtWidgets.QPushButton(parent=self.centralwidget)
         self.btn_close.setGeometry(QtCore.QRect(454, 310, 101, 31))
@@ -82,9 +82,6 @@ class Ui_MainWindow(object):
         self.te_console = QtWidgets.QTextEdit(parent=self.centralwidget)
         self.te_console.setGeometry(QtCore.QRect(10, 10, 541, 291))
         self.te_console.setObjectName("te_console")
-        self.btn_start = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.btn_start.setGeometry(QtCore.QRect(350, 310, 101, 31))
-        self.btn_start.setObjectName("btn_start")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -93,6 +90,5 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.lbl_savePath.setText(_translate("MainWindow", "Files will be saved here:"))
+        self.lbl_savePath.setText(_translate("MainWindow", " Files will be saved here:"))
         self.btn_close.setText(_translate("MainWindow", "close"))
-        self.btn_start.setText(_translate("MainWindow", "start"))

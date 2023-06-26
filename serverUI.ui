@@ -79,12 +79,12 @@ QPushButton:pressed {
      <rect>
       <x>16</x>
       <y>309</y>
-      <width>331</width>
+      <width>431</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Files will be saved here:</string>
+     <string> Files will be saved here:</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_close">
@@ -108,19 +108,6 @@ QPushButton:pressed {
       <width>541</width>
       <height>291</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_start">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>310</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>start</string>
     </property>
    </widget>
   </widget>
