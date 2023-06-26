@@ -18,6 +18,22 @@ import struct
 import pathlib
 import sqlite3
 
+# сокращение вывода БД
+def textTrans(text, QuoteMode):
+	if QuoteMode:
+		text = text.replace("(","")
+		text = text.replace(")","")
+		text = text.replace(",","")
+		text = text.replace("'","")
+		return text
+
+	else:
+		text = text.replace("(","")
+		text = text.replace(")","")
+		text = text.replace(",","")
+		return text
+
+
 # таймер
 class TimerThread(QtCore.QThread):
 	s_timer = QtCore.pyqtSignal(int)
@@ -242,15 +258,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow, QDialog):
 
 		cursor.execute("SELECT clientPort FROM savedData WHERE rowid = 1")
 		port = str(cursor.fetchone())
-
-		ip = ip.replace("(","")
-		ip = ip.replace(")","")
-		ip = ip.replace("'", "")
-		self.ip = ip.replace(",","")
-
-		port = port.replace("(","")
-		port = port.replace(")","")
-		self.port = port.replace(",","")
+ 
+		self.ip = textTrans(ip, True)
+		self.port = textTrans(port, True)
 
 		print(self.ip + ":" + self.port)
 
