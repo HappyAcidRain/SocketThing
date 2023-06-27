@@ -333,39 +333,33 @@ class SettingWindow(QtWidgets.QMainWindow, settingsUI.Ui_MainWindow, QDialog):
 		self.le_serverPort.setPlaceholderText(serverPort)
 		self.le_path.setPlaceholderText(serverPath)
 
-	# TODO: make this with loops
 	def save(self):
 
-		clientIp = self.le_clientIp.text()
-		clientPort = self.le_clientPort.text()
-		serverIp = self.le_serverIp.text()
-		serverPort = self.le_serverPort.text()
-		serverPath = self.le_path.text()
+		connect = sqlite3.connect("settings.db")
+		cursor = connect.cursor()
 
-		self.write('clientIp', clientIp)
-		self.write('clientPort', clientPort)
-		self.write('serverIp', serverIp)
-		self.write('serverPort', serverPort)
-		self.write('serverPath', serverPath)
+		clientIp = ''
+		clientPort = ''
+		serverIp = ''
+		serverPort = ''
+		serverPath = ''
 
-		self.placeholderChange(self.le_clientIp, clientIp)
-		self.placeholderChange(self.le_clientPort, clientPort)
-		self.placeholderChange(self.le_serverIp, serverIp)
-		self.placeholderChange(self.le_serverPort, serverPort)
-		self.placeholderChange(self.le_path, serverPath)
+		enum = [
+			[serverIp, 'serverIp', self.le_serverIp],
+			[serverPort, 'serverPort', self.le_serverPort],
+			[serverPath, 'serverPath', self.le_path],
+			[clientIp, 'clientIp', self.le_clientIp],
+			[clientPort, 'clientPort', self.le_clientPort]
+			]
 
-	def write(self, place, text):
-		if text != '':
-			connect = sqlite3.connect("settings.db")
-			cursor = connect.cursor()
-			cursor.execute(f"UPDATE savedData SET {place} = '{text}' WHERE rowid = 1 ")
-			connect.commit()
-			connect.close()
-
-	def placeholderChange(self, place, text):
-		if text != '':
-			place.setPlaceholderText(text)
-
+		for first, second, third in enum:
+			if third.text() != '':
+				first = third.text()
+				third.setPlaceholderText(first)
+				cursor.execute(f"UPDATE savedData SET {second} = '{first}' WHERE rowid = 1 ")
+				connect.commit()
+		
+		connect.close()
 
 # окно сервера 
 class ServerWindow(QtWidgets.QMainWindow, serverUI.Ui_MainWindow, QDialog):
